@@ -1,0 +1,120 @@
+#### Websockets, STOMP
+
+#### Cassandra
+
+1. cassandra is not neither row-oriented nor column-oriented.
+2. cassandra uses "partitioned row store"
+
+---
+1. **column-oriented / columnar-databases**
+   1. physically store each column one after another.
+   2. e.g. Amazon Redshift, Google BigQuery
+2. row-oriented databases
+   1. physically store each row one after another.
+   2. e.g. postgres
+---
+#### why store data in different nodes ? why not a single big machines ?
+1. cannot scale.
+
+
+
+---
+#### Reasoning behind storing user authentication information in postgres and message related information in cassandra
+
+#### postgres
+1. uniqueness on a column better than cassandra
+   1. what if two users try to create accounts with same username, and these requests reach two different nodes of cassandra ?
+   2. cassandra by default it is eventually consistent (tunable), which makes unique constraint difficult to handle.
+2. ACID properties
+   1. when registering a user, all user related tables which needs to be updated must be updated in a single transaction.
+3. transactions (rollbacks)
+   1. if some transaction (sequence of queries) fails midway, postgres keeps the database in consistent state by rolling back.
+4. foreign keys. can use JOIN queries (between users table and roles table)
+5. in the future, if we introduce features like billing or user preference tables, tables needed for analytics, there is chance where we have to maintain strong consistency and should be able to performs joins.
+
+#### cassandra
+1. good at handling high amounts of reads and writes
+2. can handle large amounts of data, by scaling horizontally without sharding. by design, cassandra contains operates with lots of nodes and clusters, which communicate with each other automatically.
+3. replication by design (so availability and replication)
+4. can store a single user's messages at a single place automatically sorted by time. (user_id as partition-key and timestamp as clustering key)
+5. no foreign key concept.
+6. we have to scale the message service heavily, but the user authentication system can be small when compared.
+7. single user's data (messages with everybody else) should be in a single node preferably. so we must choose the primary / partition key carefully, we should not query multiple nodes to fetch a single user's messages.
+
+some queries that involve postgres
+1. fetch user by username
+2. fetch roles of user by joining on user_id
+3. user registration
+4. update password
+
+some queries that involve cassandra (taking the trade off for transactions, for scalability)
+1. recent messages of user
+2. messages of user before / after a timestamp
+3. participants of a chat
+4. chats of a user
+
+
+Postgres Schema
+```postgresql
+   CREATE TABLE users (
+       id UUID PRIMARY KEY,
+       username VARCHAR(255) UNIQUE NOT NULL, -- automatically indexed
+       email VARCHAR(255) UNIQUE NOT NULL, -- automatically indexed
+       password VARCHAR(255) NOT NULL,
+       avatar_url VARCHAR(255),
+       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+       updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+   );
+
+   CREATE TABLE roles (
+       id UUID PRIMARY KEY,
+       name VARCHAR(255) UNIQUE NOT NULL
+   );
+
+   CREATE TABLE user_role (
+     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+     role_id UUID REFERENCES roles(id) ON DELETE CASCADE,
+     PRIMARY KEY (user_id, role_id)
+   );
+```
+```cassandraql
+
+CREATE TABLE chats (
+    id uuid,
+    type text, -- todo: datastax cassandra contains enum. for now 'direct', 'group'
+    last_activity_timestamp timestamp,
+    last_message_sender_id uuid,
+    last_message_content text,
+    last_message_timestamp timestamp,
+        created_at timestamp,
+    updated_at timestamp,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE participants (
+     user_id uuid,
+     chat_id uuid,
+     created_at timestamp,
+     updated_at timestamp,
+     PRIMARY KEY ((user_id), chat_id)
+);
+
+CREATE TABLE messages (
+   id timeuuid,
+   chat_id uuid,
+   sender_id uuid,
+   content text,
+   type text,
+   created_at timestamp,
+   updated_at timestamp,
+   PRIMARY KEY ((chat_id), created_at)
+) WITH CLUSTERING ORDER BY (created_at DESC);
+```
+
+#### why not store user_ids as an array in participants for group chats ?
+1. duplication of data
+2. fetching chats of user would be costly (to go through each element in array)
+
+#### why not add roles in users table itself ? ()
+1. duplication of data as a single user can have multiple roles. again storing as array is a bad idea.
+2. query to fetch all users with specific role will be in-efficient.
