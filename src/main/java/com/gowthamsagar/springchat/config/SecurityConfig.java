@@ -16,7 +16,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests( req -> req
-                .requestMatchers("/", "/login", "/register").permitAll()
+                .requestMatchers("/", "/sign-up", "/register").permitAll()
                 .anyRequest().authenticated());
 
         // csrf (disabled for now)
@@ -25,7 +25,7 @@ public class SecurityConfig {
         // form login
         http.formLogin( form -> form
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/home", true)
                 .permitAll());
 
         // oauth2 login

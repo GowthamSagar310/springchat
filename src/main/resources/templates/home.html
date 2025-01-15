@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringChat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./static/home_style.css">
+</head>
+<style>
+
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .top-half {
+        height: 50%;
+        background-color: #007bff;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+
+    main {
+        width: 50%;
+        height: 65%;
+        max-width: 1200px;
+        background: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        padding: 10px;
+        margin: 10px;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 20%);
+    }
+
+    .inbox {
+        padding: 8px 12px;
+    }
+
+    .chat-window {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: #f9f9f9;
+    }
+
+    .chat-messages {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px;
+        background: #fff;
+    }
+
+    .message-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .message {
+        border-radius: 8px;
+        background-color: #f0f0f0;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+    }
+
+    .chat-input {
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .send-button {
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .send-button:hover {
+        background-color: #0056b3;
+    }
+
+    input::placeholder {
+        font-size: 0.9rem;
+        color: #999;
+    }
+</style>
+<body>
+    <main class="row">
+        <div class="top-half position-absolute w-100"></div>
+        <!-- left section -->
+        <section class="inbox col-md-4 border rounded">
+            <div class="row">
+
+                <!-- search -->
+                <div>
+                    <input type="search" name="" id="" class="form-control rounded mb-3" placeholder="Search">
+                </div>
+
+                <div class="chats">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action" th:each="chat : ${chats}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1" th:text="${chat.username}">User Name</h6>
+                                <small  th:text="${#temporals.format(chat.lastMessageTimestamp, 'HH:mm')}">Time</small>
+                            </div>
+                            <p class="mb-1" th:text="${chat.lastMessageContent}"></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- right section -->
+        <section class="chats col-md-8">
+            <div class="chat-window d-flex flex-column">
+                <div class="chat-messages flex-grow-1 overflow-auto">
+                    <div class="message-container">
+                        <div class="message">User1: Message 1</div>
+                        <div class="message">User1: Message 1</div>
+                        <div class="message">User1: Message 1</div>
+                    </div>
+                </div>
+
+                <div class="chat-input p-2">
+                    <textarea class="form-control mb-2" placeholder="Type your message"></textarea>
+                    <button class="btn btn-primary mt-2 w-100 send-button">Send</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
