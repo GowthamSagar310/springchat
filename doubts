@@ -118,3 +118,5 @@ CREATE TABLE messages (
 #### why not add roles in users table itself ? ()
 1. duplication of data as a single user can have multiple roles. again storing as array is a bad idea.
 2. query to fetch all users with specific role will be in-efficient.
+
+### TODO: add secondary index

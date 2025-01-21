@@ -1,22 +1,27 @@
 package com.gowthamsagar.springchat.controller;
 
+
+import net.minidev.json.JSONObject;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+
 
 @Controller
-public class HomeController {
+public class ChatController {
 
-    @GetMapping("/home")
-    public String home() {
+    // client sends the message to /app/sendMessage
 
-        String userId = null;
+    @MessageMapping("/sendMessage")
+    @SendTo("/topic/public")
+    public String sendMessage(@Payload String message) {
+        String username = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // todo: decide which one to use
-        // if (authentication != null && authentication.isAuthenticated()) {}
         if (authentication != null && authentication.getPrincipal() != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof OAuth2User) {
@@ -24,21 +29,18 @@ public class HomeController {
                 // handle userId
                 // todo: what permissions do i need to ask, for username details ?
                 // store github username. not the mail.
+                username = oAuth2User.getAttribute("name");
             } else if (principal instanceof UserDetails) {
                 UserDetails userDetails = (UserDetails) principal;
-                userId = userDetails.getUsername();
+                username = userDetails.getUsername();
             }
         } else {
-            return "index";
+            System.out.println("user not logged in. could not send message");
         }
-
-        if (userId != null) {
-            // get inbox
-            // get messages
-            return "home";
-        }
-
-        return "index";
+        JSONObject response = new JSONObject();
+        response.put("username", username);
+        response.put("message", message);
+        return JSONObject.toJSONString(response);
     }
 
 }

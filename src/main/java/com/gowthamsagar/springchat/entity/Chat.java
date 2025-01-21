@@ -15,14 +15,12 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
 @Table(name = "chats")
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Chat {
 
-    @Id
     @PrimaryKeyColumn(name = "user_id", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     @CassandraType(type = CassandraType.Name.UUID)
     private UUID id;
