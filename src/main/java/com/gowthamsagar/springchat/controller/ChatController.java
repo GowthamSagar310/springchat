@@ -15,30 +15,27 @@ import org.springframework.stereotype.Controller;
 public class ChatController {
 
     // client sends the message to /app/sendMessage
-
     @MessageMapping("/sendMessage")
     @SendTo("/topic/public")
     public String sendMessage(@Payload String message, Authentication authentication) {
         System.out.println(message);
-        String username = null;
+        String userId = null;
         if (authentication != null && authentication.getPrincipal() != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof OAuth2User) {
-                OAuth2User oAuth2User = (OAuth2User) principal;
-                // handle userId
-                // todo: what permissions do i need to ask, for username details ?
-                // store github username. not the mail.
-                username = oAuth2User.getAttribute("name");
+                userId = ((OAuth2User) principal).getAttribute("login").toString().toLowerCase();
             } else if (principal instanceof UserDetails) {
-                UserDetails userDetails = (UserDetails) principal;
-                username = userDetails.getUsername();
+                userId = ((UserDetails) principal).getUsername();
             }
         } else {
             System.out.println("user not logged in. could not send message");
         }
 
+        // todo: add messages to DB
+        // todo: publish it to only corresponding user
+
         JSONObject responseJson = new JSONObject();
-        responseJson.put("username", username);
+        responseJson.put("userId", userId);
         responseJson.put("message", new JSONObject(message).get("message"));
         return responseJson.toString();
 

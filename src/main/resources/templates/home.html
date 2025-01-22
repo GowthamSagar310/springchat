@@ -14,20 +14,20 @@
 <body>
     <main class="row">
         <div class="top-half position-absolute w-100"></div>
-        <!-- left section -->
+        <!-- inbox section -->
         <section class="inbox col-md-4 border rounded">
             <div class="row">
 
                 <!-- search -->
                 <div>
-                    <input type="search" name="" id="" class="form-control rounded mb-3" placeholder="Search">
+                    <label for="search"></label><input type="search" name="search" id="search" class="form-control rounded mb-3" placeholder="Search">
                 </div>
 
                 <div class="chats">
                     <div class="list-group">
                         <a href="#" class="list-group-item list-group-item-action" th:each="chat : ${chats}">
                             <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1" th:text="${chat.username}">User Name</h6>
+                                <h6 class="mb-1" th:text="${chat.userId}">User Name</h6>
                                 <small  th:text="${#temporals.format(chat.lastMessageTimestamp, 'HH:mm')}">Time</small>
                             </div>
                             <p class="mb-1" th:text="${chat.lastMessageContent}"></p>
@@ -37,18 +37,16 @@
             </div>
         </section>
 
-        <!-- right section -->
+        <!-- chat section -->
         <section class="chats col-md-8">
             <div class="chat-window d-flex flex-column">
-                <div class="chat-messages flex-grow-1 overflow-auto">
-                    <div id="message-container" class="message-container">
-                        <!-- populate messages -->
-                    </div>
+                <div  id="message-container" class="message-container flex-grow-1 overflow-y">
+                    <!-- populate messages -->
                 </div>
-
-                <div class="chat-input p-2">
-                    <textarea id="messageInput" class="form-control mb-2" placeholder="Type your message"></textarea>
-                    <button id="sendMessageButton" class="btn btn-primary mt-2 w-100 send-button">Send</button>
+                <div class="chat-input">
+                    <label for="messageInput"></label>
+                    <textarea id="messageInput" class="form-control" placeholder="Type your message"></textarea>
+                    <button id="sendMessageButton" class="btn btn-primary send-button">Send</button>
                 </div>
             </div>
         </section>

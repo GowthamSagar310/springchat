@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .permitAll());
 
         // oauth2 login
-        http.oauth2Login(Customizer.withDefaults());
+        // http.oauth2Login(Customizer.withDefaults());
         http.oauth2Login( oauth -> oauth
                 .loginPage("/")
                 .defaultSuccessUrl("/home", true) // if successful login, take to user's home page

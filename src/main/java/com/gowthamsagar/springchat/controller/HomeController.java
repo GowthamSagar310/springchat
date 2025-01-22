@@ -15,13 +15,9 @@ public class HomeController {
         if (authentication != null && authentication.isAuthenticated()) {
          Object principal = authentication.getPrincipal();
          if (principal instanceof OAuth2User) {
-             OAuth2User oAuth2User = (OAuth2User) principal;
-             // handle userId
-             // todo: what permissions do i need to ask, for username details ?
-             // store github username. not the mail.
+             userId = ((OAuth2User) principal).getAttribute("login").toString().toLowerCase();
          } else if (principal instanceof UserDetails) {
-             UserDetails userDetails = (UserDetails) principal;
-             userId = userDetails.getUsername();
+             userId = ((UserDetails) principal).getUsername();
          }
         } else {
             return "index";

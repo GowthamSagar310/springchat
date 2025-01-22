@@ -37,3 +37,4 @@
 3. https://medium.com/yugabyte/building-scalable-cloud-services-an-instant-messaging-app-97cd52fbc121
 4. https://www.datastax.com/blog/introduction-to-apache-cassandra-the-lamborghini-of-the-nosql-world
 5. https://youtu.be/uwuF9xa3Vyw?t=2970
+6. [Whatsapp System Design - CodeKarle](https://www.youtube.com/watch?v=RjQjbJ2UJDg&t=4s)

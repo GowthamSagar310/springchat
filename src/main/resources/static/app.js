@@ -26,18 +26,23 @@ function onMessageReceived(payload) {
 function createMessageElement(payloadJson) {
     var messageElement = document.createElement("div");
 
-    var avatarElement = document.createElement('i'); // change it to display profile picture. GCP bucket ?
-    var avatarText = document.createTextNode((payloadJson.username)[0]);
-    avatarElement.style['background-color'] = "#5f8fc5"
-    avatarElement.appendChild(avatarText);
+    // var avatarElement = document.createElement('i'); // change it to display profile picture. GCP bucket ?
+    // var avatarText = document.createTextNode((payloadJson.username)[0]);
+    // avatarElement.style['background-color'] = "#5f8fc5"
+    // avatarElement.appendChild(avatarText);
+    //
+    // messageElement.appendChild(avatarElement);
 
-    messageElement.appendChild(avatarElement);
-    messageElement.classList.add("chat-message")
+    var userIdElement = document.createElement("span");
+    userIdElement.appendChild(document.createTextNode(payloadJson.userId + " :"));
+    userIdElement.classList.add("username-style")
+    messageElement.appendChild(userIdElement);
 
     var messageText = document.createElement("span");
     messageText.appendChild(document.createTextNode(payloadJson.message));
     messageElement.appendChild(messageText);
 
+    messageElement.classList.add("chat-message")
     message_container.appendChild(messageElement);
     message_container.scrollTop = message_container.scrollHeight;
     return messageElement;
@@ -57,5 +62,6 @@ sendMessageButton.addEventListener("click", (event) => {
     } else {
         console.error("WebSocket is not connected.");
     }
+    messageInputElement.value = '';
     event.preventDefault();
 })
