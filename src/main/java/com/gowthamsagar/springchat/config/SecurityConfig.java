@@ -16,7 +16,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests( req -> req
-                .requestMatchers("/", "/sign-up", "/register").permitAll()
+                .requestMatchers("/", "/sign-up", "/register", "/login", "/invalid-session").permitAll()
                 .anyRequest().authenticated());
 
         // csrf (disabled for now)
@@ -24,17 +24,23 @@ public class SecurityConfig {
 
         // form login
         http.formLogin( form -> form
+                .loginPage("/")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/home", true)
                 .permitAll());
 
         // oauth2 login
         http.oauth2Login(Customizer.withDefaults());
-        http.oauth2Login( oauth -> oauth.defaultSuccessUrl("/home", true)); // if successful login, take to user's home page
+        http.oauth2Login( oauth -> oauth
+                .loginPage("/")
+                .defaultSuccessUrl("/home", true) // if successful login, take to user's home page
+        );
 
         // logout
         http.logout( logout -> { logout
-                .logoutSuccessUrl("/logout");
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .permitAll();
         });
 
         return http.build();

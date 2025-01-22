@@ -32,6 +32,10 @@
 </style>
 <body>
 
+<noscript>
+    <h2>Sorry! Your browser doesn't support Javascript</h2>
+</noscript>
+
 <main class="card border-light-subtle shadow-sm">
     <div class="row g-3 no-row-gutters">
         <!-- Left Section -->
@@ -49,17 +53,27 @@
 
                 <div class="mb-3">
                     <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
-                    <input type="text" name="username" class="form-control" id="username" placeholder="Dragon123" required>
+                    <input type="text" name="username" class="form-control" id="username" placeholder="Dragon123" required autofocus>
                 </div>
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                    <input type="password" name="password" class="form-control" id="password" placeholder="**************">
+                    <input type="password" name="password" class="form-control" id="password" placeholder="**************" autocomplete="off">
                 </div>
 
                 <div class="d-flex justify-content-center gap-2">
                     <button id="signin" type="submit" class="btn btn-primary mb-3 btn-sm">Sign In</button>
                 </div>
+
+<!--                &lt;!&ndash; Error message &ndash;&gt;-->
+<!--                <div th:if="${param.error}" class="alert alert-danger" role="alert">-->
+<!--                    Invalid username or password!-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Logout success message &ndash;&gt;-->
+<!--                <div th:if="${param.logout}" class="alert alert-success" role="alert">-->
+<!--                    You have been logged out successfully!-->
+<!--                </div>-->
 
                 <hr>
                 <p class="text-center m-0">New User? <a th:href="@{/register}">Sign Up</a></p>

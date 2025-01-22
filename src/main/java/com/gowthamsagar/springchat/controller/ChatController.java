@@ -1,12 +1,11 @@
 package com.gowthamsagar.springchat.controller;
 
 
-import net.minidev.json.JSONObject;
+import org.json.JSONObject;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -19,9 +18,9 @@ public class ChatController {
 
     @MessageMapping("/sendMessage")
     @SendTo("/topic/public")
-    public String sendMessage(@Payload String message) {
+    public String sendMessage(@Payload String message, Authentication authentication) {
+        System.out.println(message);
         String username = null;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof OAuth2User) {
@@ -37,10 +36,12 @@ public class ChatController {
         } else {
             System.out.println("user not logged in. could not send message");
         }
-        JSONObject response = new JSONObject();
-        response.put("username", username);
-        response.put("message", message);
-        return JSONObject.toJSONString(response);
+
+        JSONObject responseJson = new JSONObject();
+        responseJson.put("username", username);
+        responseJson.put("message", new JSONObject(message).get("message"));
+        return responseJson.toString();
+
     }
 
 }

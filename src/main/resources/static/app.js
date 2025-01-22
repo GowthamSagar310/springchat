@@ -18,25 +18,42 @@ var message_container = document.getElementById("message-container");
 
 function onMessageReceived(payload) {
     // client recieves message / payload from the server
-    var message = JSON.parse(payload.body);
+    var payloadJson = JSON.parse(payload.body);
+    message_container.appendChild(createMessageElement(payloadJson))
+}
+
+// helper function to create a message element (chat-message)
+function createMessageElement(payloadJson) {
     var messageElement = document.createElement("div");
-    messageElement.classList.add("message")
-    messageElement.appendChild(document.createTextNode("RECEIEVED: " + message));
+
+    var avatarElement = document.createElement('i'); // change it to display profile picture. GCP bucket ?
+    var avatarText = document.createTextNode((payloadJson.username)[0]);
+    avatarElement.style['background-color'] = "#5f8fc5"
+    avatarElement.appendChild(avatarText);
+
+    messageElement.appendChild(avatarElement);
+    messageElement.classList.add("chat-message")
+
+    var messageText = document.createElement("span");
+    messageText.appendChild(document.createTextNode(payloadJson.message));
+    messageElement.appendChild(messageText);
+
     message_container.appendChild(messageElement);
+    message_container.scrollTop = message_container.scrollHeight;
+    return messageElement;
+
 }
 
 // send message
 var sendMessageButton = document.getElementById("sendMessageButton")
 sendMessageButton.addEventListener("click", (event) => {
-    if (stompClient && stompClient.connected) {
+    var messageInputElement = document.getElementById("messageInput");
+    var messageContent = messageInputElement.value.trim();
+    if (messageContent && (stompClient && stompClient.connected)) {
         stompClient.publish({
             destination: '/app/sendMessage',
-            body: JSON.stringify({user: username, message: "dummy message"}),
+            body: JSON.stringify({user: username, message: messageContent}),
         });
-        // var messageElement = document.createElement("div");
-        // messageElement.appendChild(document.createTextNode("SENT: User n: dummy message"));
-        // messageElement.classList.add("message");
-        // message_container.appendChild(messageElement);
     } else {
         console.error("WebSocket is not connected.");
     }
