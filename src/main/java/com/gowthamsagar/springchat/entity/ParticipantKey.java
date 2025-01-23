@@ -21,10 +21,8 @@ public class ParticipantKey {
     @CassandraType(type = CassandraType.Name.UUID)
     private UUID chatId;
 
-    @PrimaryKeyColumn(name = "user_id", ordinal = 0, type = PrimaryKeyType.CLUSTERED    )
+    @PrimaryKeyColumn(name = "user_id", ordinal = 2, type = PrimaryKeyType.CLUSTERED)
     @CassandraType(type = CassandraType.Name.UUID)
     private UUID userId;
-
-
 
 }

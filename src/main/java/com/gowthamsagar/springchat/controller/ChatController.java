@@ -1,6 +1,13 @@
 package com.gowthamsagar.springchat.controller;
 
 
+import com.gowthamsagar.springchat.dto.ChatMessage;
+import com.gowthamsagar.springchat.entity.Message;
+import com.gowthamsagar.springchat.entity.MessageKey;
+import com.gowthamsagar.springchat.entity.Participant;
+import com.gowthamsagar.springchat.entity.ParticipantKey;
+import com.gowthamsagar.springchat.service.MessageService;
+import com.gowthamsagar.springchat.service.ParticipantService;
 import org.json.JSONObject;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -10,15 +17,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 
-
 @Controller
 public class ChatController {
+
+    private final MessageService messageService;
+    private final ParticipantService participantService;
+
+    public ChatController(MessageService messageService, ParticipantService participantService) {
+        this.messageService = messageService;
+        this.participantService = participantService;
+    }
 
     // client sends the message to /app/sendMessage
     @MessageMapping("/sendMessage")
     @SendTo("/topic/public")
-    public String sendMessage(@Payload String message, Authentication authentication) {
-        System.out.println(message);
+    public String sendMessage(@Payload ChatMessage chatMessage, Authentication authentication) {
+
         String userId = null;
         if (authentication != null && authentication.getPrincipal() != null) {
             Object principal = authentication.getPrincipal();
@@ -31,12 +45,21 @@ public class ChatController {
             System.out.println("user not logged in. could not send message");
         }
 
-        // todo: add messages to DB
-        // todo: publish it to only corresponding user
+        messageService.createAndSaveMessage(chatMessage);
+
+        // change this code based on chat type.
+        // Participant participant = new Participant(new ParticipantKey(chatMessage.getChatId(), userId));
+
+        // participantService.saveParticipant();
+
+        // todo: 2. add participants in chat if not there
+        // todo: 3. add in chat table if not there.
+        // todo: 4. add {username, userid, content, type}
+        // is it optimized to do all these for every query ?
 
         JSONObject responseJson = new JSONObject();
         responseJson.put("userId", userId);
-        responseJson.put("message", new JSONObject(message).get("message"));
+        responseJson.put("message", new JSONObject(chatMessage.getContent()).get("message"));
         return responseJson.toString();
 
     }

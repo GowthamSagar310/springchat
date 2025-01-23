@@ -1,6 +1,16 @@
 'use strict';
 
 var username = null;
+var UUID = null;
+
+/*
+* 1. inbox -> chats -> each have a UUID chatId
+* 2.
+*
+*
+*
+* */
+
 // stomp client
 const stompClient = new StompJs.Client({
     brokerURL: 'ws://localhost:9090/chat',
@@ -57,6 +67,7 @@ sendMessageButton.addEventListener("click", (event) => {
     if (messageContent && (stompClient && stompClient.connected)) {
         stompClient.publish({
             destination: '/app/sendMessage',
+            // body: JSON.stringify({chatId: <chatId>, senderId: <senderId>, content: messageContent}),
             body: JSON.stringify({user: username, message: messageContent}),
         });
     } else {

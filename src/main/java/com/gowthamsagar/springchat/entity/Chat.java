@@ -21,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Chat {
 
-    @PrimaryKeyColumn(name = "user_id", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
+    @PrimaryKeyColumn(name = "chat_id", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     @CassandraType(type = CassandraType.Name.UUID)
     private UUID id;
 
@@ -37,9 +37,6 @@ public class Chat {
 
     @Column(name = "created_at")
     private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
 
     // for easy inbox population
     @Column(name = "last_message_content")
