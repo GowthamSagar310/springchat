@@ -12,6 +12,13 @@
     <link rel="stylesheet" href="/home_style.css">
 </head>
 <body>
+
+    <script th:inline="javascript">
+        var username =  /*[[${username}]]*/ '';
+        var userId =  /*[[${userId}]]*/ '';
+    </script>
+
+
     <main class="row">
         <div class="top-half position-absolute w-100"></div>
         <!-- inbox section -->
@@ -25,10 +32,16 @@
 
                 <div class="chats">
                     <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action" th:each="chat : ${chats}">
+                        <a
+                                href="javascript:void(0)"
+                                class="list-group-item list-group-item-action"
+                                th:each="chat : ${chats}"
+                                th:data-chat-id="${chat.chatId}"
+                                onclick="setActiveChatId(event, this)"
+                        >
                             <div class="d-flex w-100 justify-content-between">
                                 <h6 class="mb-1" th:text="${chat.userId}">User Name</h6>
-                                <small  th:text="${#temporals.format(chat.lastMessageTimestamp, 'HH:mm')}">Time</small>
+                                <small  th:text="${chat.lastMessageTimestamp}">Time</small>
                             </div>
                             <p class="mb-1" th:text="${chat.lastMessageContent}"></p>
                         </a>

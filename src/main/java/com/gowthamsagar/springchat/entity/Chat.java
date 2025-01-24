@@ -15,6 +15,8 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import java.time.Instant;
 import java.util.UUID;
 
+// cassandra entity
+
 @Table(name = "chats")
 @Getter @Setter
 @AllArgsConstructor
@@ -49,7 +51,5 @@ public class Chat {
 
     @Column(name = "last_message_timestamp")
     private Instant lastMessageTimestamp;
-
-
 
 }

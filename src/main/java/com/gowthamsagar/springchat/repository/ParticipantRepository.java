@@ -1,8 +1,7 @@
 package com.gowthamsagar.springchat.repository;
 
-import com.gowthamsagar.springchat.entity.Chat;
 import com.gowthamsagar.springchat.entity.Participant;
-import com.gowthamsagar.springchat.entity.ParticipantKey;
+import com.gowthamsagar.springchat.entity.key.ParticipantKey;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

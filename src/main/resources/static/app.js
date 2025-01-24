@@ -1,15 +1,6 @@
 'use strict';
 
-var username = null;
-var UUID = null;
-
-/*
-* 1. inbox -> chats -> each have a UUID chatId
-* 2.
-*
-*
-*
-* */
+var activeChatId = null;
 
 // stomp client
 const stompClient = new StompJs.Client({
@@ -64,15 +55,29 @@ var sendMessageButton = document.getElementById("sendMessageButton")
 sendMessageButton.addEventListener("click", (event) => {
     var messageInputElement = document.getElementById("messageInput");
     var messageContent = messageInputElement.value.trim();
-    if (messageContent && (stompClient && stompClient.connected)) {
+    if (messageContent && (stompClient && stompClient.connected) & activeChatId) {
         stompClient.publish({
             destination: '/app/sendMessage',
-            // body: JSON.stringify({chatId: <chatId>, senderId: <senderId>, content: messageContent}),
-            body: JSON.stringify({user: username, message: messageContent}),
+            body: JSON.stringify({
+                userId: userId,
+                username: username,
+                chatId: activeChatId,
+                message: messageContent,
+            })
         });
     } else {
         console.error("WebSocket is not connected.");
+        if (!activeChatId) {
+            console.error("there is no active chat")
+        }
     }
     messageInputElement.value = '';
     event.preventDefault();
 })
+
+// move this to new js file
+// set active chat id
+function setActiveChatId(event, chatLinkElement) {
+    activeChatId = chatLinkElement.getAttribute('data-chat-id');
+    console.log("change active chatId to: " + activeChatId);
+}

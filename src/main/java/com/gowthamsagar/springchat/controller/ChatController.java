@@ -2,10 +2,6 @@ package com.gowthamsagar.springchat.controller;
 
 
 import com.gowthamsagar.springchat.dto.ChatMessage;
-import com.gowthamsagar.springchat.entity.Message;
-import com.gowthamsagar.springchat.entity.MessageKey;
-import com.gowthamsagar.springchat.entity.Participant;
-import com.gowthamsagar.springchat.entity.ParticipantKey;
 import com.gowthamsagar.springchat.service.MessageService;
 import com.gowthamsagar.springchat.service.ParticipantService;
 import org.json.JSONObject;

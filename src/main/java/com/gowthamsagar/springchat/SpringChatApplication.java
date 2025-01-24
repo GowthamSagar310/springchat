@@ -40,9 +40,17 @@ public class SpringChatApplication {
                     .role("USER")
                     .build();
 
+            ChatUser deepika = ChatUser.builder()
+                    .username("deepika")
+                    .email("deepika@test.com")
+                    .password(passwordEncoder.encode("deepika"))
+                    .role("USER")
+                    .build();
+
             userRepository.save(admin);
             userRepository.save(test1);
             userRepository.save(test2);
+            userRepository.save(deepika);
         };
     }
 }

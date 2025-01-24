@@ -1,4 +1,4 @@
-package com.gowthamsagar.springchat.entity;
+package com.gowthamsagar.springchat.entity.key;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

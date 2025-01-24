@@ -1,7 +1,7 @@
 package com.gowthamsagar.springchat.repository;
 
 import com.gowthamsagar.springchat.entity.Message;
-import com.gowthamsagar.springchat.entity.MessageKey;
+import com.gowthamsagar.springchat.entity.key.MessageKey;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

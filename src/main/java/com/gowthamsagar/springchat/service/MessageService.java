@@ -2,10 +2,9 @@ package com.gowthamsagar.springchat.service;
 
 import com.gowthamsagar.springchat.dto.ChatMessage;
 import com.gowthamsagar.springchat.entity.Message;
-import com.gowthamsagar.springchat.entity.MessageKey;
+import com.gowthamsagar.springchat.entity.key.MessageKey;
 import com.gowthamsagar.springchat.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;

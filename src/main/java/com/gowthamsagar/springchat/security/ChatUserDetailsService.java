@@ -5,7 +5,6 @@ import com.gowthamsagar.springchat.repository.ChatUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,7 +26,10 @@ public class ChatUserDetailsService implements UserDetailsService {
         );
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(chatUser.getRole()));
-        return new User(chatUser.getUsername(), chatUser.getPassword(), grantedAuthorities);
+
+        return new ChatUserDetails(chatUser.getUsername(), chatUser.getPassword(), grantedAuthorities, chatUser.getId());
+        // return new ChatUserDetails(chatUser, grantedAuthorities)
+
     }
 
 }
