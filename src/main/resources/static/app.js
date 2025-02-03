@@ -1,6 +1,9 @@
 'use strict';
 
 var activeChatId = null;
+var noActiveChatMessageElement = document.getElementById("no-active-chat-message");
+var messageInputElement = document.getElementById("messageInput");
+var sendMessageButton = document.getElementById("sendMessageButton");
 
 // stomp client
 const stompClient = new StompJs.Client({
@@ -50,10 +53,7 @@ function createMessageElement(payloadJson) {
 
 }
 
-// send message
-var sendMessageButton = document.getElementById("sendMessageButton")
 sendMessageButton.addEventListener("click", (event) => {
-    var messageInputElement = document.getElementById("messageInput");
     var messageContent = messageInputElement.value.trim();
     if (messageContent && (stompClient && stompClient.connected) & activeChatId) {
         stompClient.publish({
@@ -80,4 +80,9 @@ sendMessageButton.addEventListener("click", (event) => {
 function setActiveChatId(event, chatLinkElement) {
     activeChatId = chatLinkElement.getAttribute('data-chat-id');
     console.log("change active chatId to: " + activeChatId);
+
+    noActiveChatMessageElement.style.display = 'none';
+
+    messageInputElement.disabled = false;
+    sendMessageButton.disabled = false;
 }

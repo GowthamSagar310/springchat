@@ -98,9 +98,28 @@ main {
 }
 
 .chat-message {
-    display: flex;
+    /*display: flex;*/
     border-radius: 8px;
     align-self: flex-start;
     word-wrap: break-word;
     padding: 4px;
+    background-color: #f0f0f0;
+    display: inline-block;
+    clear: both; /* Prevent floating issues */
+}
+
+.chat-message .username-style {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.no-active-chat-message {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+    padding: 20px;
+}
+
+.list-group-item.chat-link.active {
+    background-color: #d0d7de; /* Example active chat highlight */
 }

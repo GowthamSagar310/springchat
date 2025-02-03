@@ -1,7 +1,8 @@
 package com.gowthamsagar.springchat.controller;
 
 
-import com.gowthamsagar.springchat.dto.ChatMessage;
+import com.gowthamsagar.springchat.dto.MessageDTO;
+import com.gowthamsagar.springchat.entity.Message;
 import com.gowthamsagar.springchat.service.MessageService;
 import com.gowthamsagar.springchat.service.ParticipantService;
 import org.json.JSONObject;
@@ -27,7 +28,7 @@ public class ChatController {
     // client sends the message to /app/sendMessage
     @MessageMapping("/sendMessage")
     @SendTo("/topic/public")
-    public String sendMessage(@Payload ChatMessage chatMessage, Authentication authentication) {
+    public String sendMessage(@Payload Message chatMessage, Authentication authentication) {
 
         String userId = null;
         if (authentication != null && authentication.getPrincipal() != null) {

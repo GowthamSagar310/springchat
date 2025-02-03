@@ -1,6 +1,6 @@
 package com.gowthamsagar.springchat.service;
 
-import com.gowthamsagar.springchat.dto.ChatMessage;
+import com.gowthamsagar.springchat.dto.MessageDTO;
 import com.gowthamsagar.springchat.entity.Message;
 import com.gowthamsagar.springchat.entity.key.MessageKey;
 import com.gowthamsagar.springchat.repository.MessageRepository;
@@ -38,7 +38,7 @@ public class MessageService {
     }
 
     // create and save message record in DB
-    public void createAndSaveMessage(ChatMessage chatMessage) {
+    public void createAndSaveMessage(Message chatMessage) {
         Message message = new Message();
 
         MessageKey messageKey = new MessageKey();

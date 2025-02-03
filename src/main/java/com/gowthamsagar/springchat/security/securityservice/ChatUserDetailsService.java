@@ -1,7 +1,8 @@
-package com.gowthamsagar.springchat.security;
+package com.gowthamsagar.springchat.security.securityservice;
 
 import com.gowthamsagar.springchat.entity.ChatUser;
 import com.gowthamsagar.springchat.repository.ChatUserRepository;
+import com.gowthamsagar.springchat.security.ChatUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

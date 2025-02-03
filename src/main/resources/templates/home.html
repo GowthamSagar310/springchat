@@ -16,6 +16,7 @@
     <script th:inline="javascript">
         var username =  /*[[${username}]]*/ '';
         var userId =  /*[[${userId}]]*/ '';
+        var activeChatId = null;
     </script>
 
 
@@ -53,13 +54,17 @@
         <!-- chat section -->
         <section class="chats col-md-8">
             <div class="chat-window d-flex flex-column">
+                <div id="no-active-chat-message" class="no-active-chat-message" th:if="${activeChatId == null}">
+                    No active chat selected. Please select a chat from the inbox to start messaging.
+                </div>
+
                 <div  id="message-container" class="message-container flex-grow-1 overflow-y">
                     <!-- populate messages -->
                 </div>
                 <div class="chat-input">
                     <label for="messageInput"></label>
-                    <textarea id="messageInput" class="form-control" placeholder="Type your message"></textarea>
-                    <button id="sendMessageButton" class="btn btn-primary send-button">Send</button>
+                    <textarea id="messageInput" class="form-control" placeholder="Type your message" th:disabled="${activeChatId == null}"></textarea>
+                    <button id="sendMessageButton" class="btn btn-primary send-button" th:disabled="${activeChatId == null}">Send</button>
                 </div>
             </div>
         </section>

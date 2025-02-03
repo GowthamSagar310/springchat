@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessage {
+public class MessageDTO {
 
     private UUID chatId;
     private UUID senderId;
