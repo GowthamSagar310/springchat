@@ -15,4 +15,7 @@ public interface ParticipantRepository extends CassandraRepository<Participant, 
     Slice<Participant> findParticipantsById_ChatId(UUID chatId, Pageable pageable);
     Slice<Participant> findParticipantsById_UserId(UUID userId, Pageable pageable);
 
+    Slice<Participant> findById(ParticipantKey participantKey, Pageable pageable);
+
+
 }

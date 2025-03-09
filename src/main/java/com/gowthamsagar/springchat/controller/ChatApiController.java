@@ -5,6 +5,7 @@ import com.gowthamsagar.springchat.security.ChatUserDetails;
 import com.gowthamsagar.springchat.security.CustomOAuth2User;
 import com.gowthamsagar.springchat.service.ChatsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatApiController {
 
-    private final ChatsService chatsService;
+    @Autowired
+    private ChatsService chatsService;
 
 
     @GetMapping("/inbox")
@@ -38,6 +40,8 @@ public class ChatApiController {
         return ResponseEntity.ok(inboxItems);
     }
 
+
+    // todo: move this to SecurityUtil
     private UUID getUserIdFromAuthentication(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         UUID userId = null;

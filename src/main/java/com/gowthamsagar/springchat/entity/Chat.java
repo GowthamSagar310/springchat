@@ -1,23 +1,20 @@
 package com.gowthamsagar.springchat.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
+import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
+import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.time.Instant;
 import java.util.UUID;
 
 // cassandra entity
-
-@Table(name = "chats")
+@Table("chats")
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,7 +24,8 @@ public class Chat {
     @CassandraType(type = CassandraType.Name.UUID)
     private UUID id;
 
-    @Column
+    @Column("type")
+    @CassandraType(type = CassandraType.Name.TEXT)
     private String type;
 
     // UTC (Universal Coordinated Time)
@@ -37,19 +35,21 @@ public class Chat {
     // can also ZonedDateTime -> can be used but adds complexities during conversions.
     // LocalDateTime -> causes conflicts if the users are in different time zones.
 
-    @Column(name = "created_at")
+    @Column("created_at")
+    @CassandraType(type = CassandraType.Name.TIMESTAMP)
     private Instant createdAt;
 
     // for easy inbox population
-    @Column(name = "last_message_content")
-    @CassandraType(type =  CassandraType.Name.TEXT)
+    @Column("last_message_content")
+    @CassandraType(type = CassandraType.Name.TEXT)
     private String lastMessageContent;
 
-    @Column(name = "last_message_sender_id")
-    @CassandraType(type =  CassandraType.Name.UUID)
+    @Column("last_message_sender_id")
+    @CassandraType(type = CassandraType.Name.UUID)
     private UUID lastMessageSenderId;
 
-    @Column(name = "last_message_timestamp")
+    @Column("last_message_timestamp")
+    @CassandraType(type = CassandraType.Name.TIMESTAMP)
     private Instant lastMessageTimestamp;
 
 }

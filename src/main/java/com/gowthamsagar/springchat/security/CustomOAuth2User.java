@@ -1,6 +1,7 @@
 package com.gowthamsagar.springchat.security;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2User oAuth2User;
+    @Getter
     private final UUID userId;
 
     @Override
@@ -31,7 +33,4 @@ public class CustomOAuth2User implements OAuth2User {
         return oAuth2User.getName();
     }
 
-    public UUID getUserId() {
-        return userId;
-    }
 }

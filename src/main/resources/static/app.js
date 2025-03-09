@@ -5,6 +5,8 @@ var noActiveChatMessageElement = document.getElementById("no-active-chat-message
 var messageInputElement = document.getElementById("messageInput");
 var sendMessageButton = document.getElementById("sendMessageButton");
 
+var currentSubscription = null; // to track current chat websocket subscription
+
 // stomp client
 const stompClient = new StompJs.Client({
     brokerURL: 'ws://localhost:9090/chat',
@@ -12,8 +14,15 @@ const stompClient = new StompJs.Client({
     heartbeatIncoming: 20000,
     heartbeatOutgoing: 20000,
     onConnect: function (frame) {
-        const subscription = stompClient.subscribe('/topic/public', onMessageReceived)
         username = frame.username;
+        console.log("WebSocket connected");
+    },
+    onDisconnect: function () {
+        console.log("WebSocket disconnected");
+        if (currentSubscription) {
+            currentSubscription.unsubscribe();
+            currentSubscription = null
+        }
     }
 });
 stompClient.activate();
@@ -55,11 +64,11 @@ function createMessageElement(payloadJson) {
 
 sendMessageButton.addEventListener("click", (event) => {
     var messageContent = messageInputElement.value.trim();
-    if (messageContent && (stompClient && stompClient.connected) & activeChatId) {
+    if (messageContent && (stompClient && stompClient.connected) && activeChatId) {
         stompClient.publish({
             destination: '/app/sendMessage',
             body: JSON.stringify({
-                userId: userId,
+                senderId: userId,
                 username: username,
                 chatId: activeChatId,
                 message: messageContent,
@@ -78,8 +87,23 @@ sendMessageButton.addEventListener("click", (event) => {
 // move this to new js file
 // set active chat id
 function setActiveChatId(event, chatLinkElement) {
+
     activeChatId = chatLinkElement.getAttribute('data-chat-id');
     console.log("change active chatId to: " + activeChatId);
+
+    // unsubscribe from previous chat
+    if (currentSubscription) {
+        console.log("Unsubscribing from previous topic");
+        currentSubscription.unsubscribe();
+        currentSubscription = null;
+    }
+
+    // subscribe to new chat
+    if (activeChatId) {
+        const topic = `/topic/chat/${activeChatId}`;
+        console.log("Subscribing to topic: " + topic);
+        currentSubscription = stompClient.subscribe(topic, onMessageReceived);
+    }
 
     noActiveChatMessageElement.style.display = 'none';
 

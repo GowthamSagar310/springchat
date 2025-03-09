@@ -1,16 +1,16 @@
 package com.gowthamsagar.springchat.entity;
 
 import com.gowthamsagar.springchat.entity.key.ParticipantKey;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.Table;
 
 // cassandra entity
 
-@Table(name = "participants")
+@Table("participants")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor

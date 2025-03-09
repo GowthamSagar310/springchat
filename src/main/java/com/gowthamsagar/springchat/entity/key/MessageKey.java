@@ -14,7 +14,6 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
-
 // why add Serializable
 @Getter @Setter
 @AllArgsConstructor

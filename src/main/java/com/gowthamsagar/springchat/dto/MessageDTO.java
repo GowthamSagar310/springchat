@@ -15,7 +15,8 @@ public class MessageDTO {
 
     private UUID chatId;
     private UUID senderId;
-    private String content;
+    private String message;
+    private String username;
 
     // private String type;  // chat type
 

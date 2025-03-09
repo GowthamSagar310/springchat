@@ -19,7 +19,6 @@
         var activeChatId = null;
     </script>
 
-
     <main class="row">
         <div class="top-half position-absolute w-100"></div>
         <!-- inbox section -->
@@ -37,14 +36,14 @@
                                 href="javascript:void(0)"
                                 class="list-group-item list-group-item-action"
                                 th:each="chat : ${chats}"
-                                th:data-chat-id="${chat.chatId}"
+                                th:data-chat-id="${chat.id}"
                                 onclick="setActiveChatId(event, this)"
                         >
                             <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1" th:text="${chat.userId}">User Name</h6>
-                                <small  th:text="${chat.lastMessageTimestamp}">Time</small>
+                                <h6 class="mb-1" th:text="${chat.senderName}">User Name</h6>
+                                <small  th:text="${chat.lastMessageDate}">Time</small>
                             </div>
-                            <p class="mb-1" th:text="${chat.lastMessageContent}"></p>
+                            <p class="mb-1" th:text="${chat.lastMessage}"></p>
                         </a>
                     </div>
                 </div>
