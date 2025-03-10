@@ -16,6 +16,7 @@ const stompClient = new StompJs.Client({
     onConnect: function (frame) {
         username = frame.username;
         console.log("WebSocket connected");
+        subscribeToInboxTopic();
     },
     onDisconnect: function () {
         console.log("WebSocket disconnected");
@@ -28,6 +29,15 @@ const stompClient = new StompJs.Client({
 stompClient.activate();
 
 var message_container = document.getElementById("message-container");
+
+// handle inbox notification
+function subscribeToInboxTopic() {
+    const inboxTopic = `/topic/inbox/${userId}`;
+    stompClient.subscribe(inboxTopic, (message) => {
+        handleInboxNotification(JSON.parse(message.body));
+    });
+    console.log("Subscribed to inbox topic: " + inboxTopic);
+}
 
 function onMessageReceived(payload) {
     // client recieves message / payload from the server
@@ -103,10 +113,43 @@ function setActiveChatId(event, chatLinkElement) {
         const topic = `/topic/chat/${activeChatId}`;
         console.log("Subscribing to topic: " + topic);
         currentSubscription = stompClient.subscribe(topic, onMessageReceived);
+
+        // remove unread chat class
+        const chatItem = document.getElementById(`chat-item-${activeChatId}`);
+        if (chatItem) {
+            chatItem.classList.remove('unread-chat');
+        }
+
+    } else {
+        // No chat selected - show "no chat" message, disable input
+        document.getElementById('no-active-chat-message').style.display = 'block';
+        document.getElementById('message-container').style.display = 'none';
+        document.querySelector('.chat-input').classList.add('disabled');
+        document.getElementById('messageInput').disabled = true;
+        document.getElementById('sendMessageButton').disabled = true;
     }
+
 
     noActiveChatMessageElement.style.display = 'none';
 
     messageInputElement.disabled = false;
     sendMessageButton.disabled = false;
+}
+
+function handleInboxNotification(notification) {
+    console.log("Inbox Notification received:", notification);
+    const chatId = notification.chatId;
+    const messagePreview = notification.messagePreview;
+    // const senderUsername = notification.senderUsername; // You can use senderUsername if needed
+
+    const chatItem = document.getElementById(`chat-item-${chatId}`); // Select chat item by ID
+    if (chatItem) {
+        const lastMessageContentElement = chatItem.querySelector('.last-message-content'); // Select last message <p>
+        if (lastMessageContentElement) {
+            lastMessageContentElement.innerText = messagePreview; // Update last message preview
+        }
+        chatItem.classList.add('unread-chat'); // Add 'unread-chat' class to make it bold
+    } else {
+        console.warn("Chat item not found in inbox for chatId: " + chatId); // Log if chat item is not found (for debugging)
+    }
 }

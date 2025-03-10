@@ -1,24 +1,37 @@
 package com.gowthamsagar.springchat;
 
 import com.gowthamsagar.springchat.entity.Chat;
+import com.gowthamsagar.springchat.entity.ChatOfParticipant;
 import com.gowthamsagar.springchat.entity.ChatUser;
-import com.gowthamsagar.springchat.entity.Participant;
-import com.gowthamsagar.springchat.entity.key.ParticipantKey;
+import com.gowthamsagar.springchat.entity.ParticipantOfChat;
+import com.gowthamsagar.springchat.entity.key.ChatOfParticipantKey;
+import com.gowthamsagar.springchat.entity.key.ParticipantOfChatKey;
+import com.gowthamsagar.springchat.repository.ChatOfParticipantRepository;
 import com.gowthamsagar.springchat.repository.ChatRepository;
 import com.gowthamsagar.springchat.repository.ChatUserRepository;
-import com.gowthamsagar.springchat.repository.ParticipantRepository;
+import com.gowthamsagar.springchat.repository.ParticipantOfChatRepository;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.util.UUID;
 
-
 @SpringBootApplication
+@EnableCassandraRepositories(basePackages = "com.gowthamsagar.springchat.repository")
 public class SpringChatApplication {
+
+    private final ParticipantOfChatRepository participantOfChatRepository;
+    private final ChatOfParticipantRepository chatOfParticipantRepository;
+
+    public SpringChatApplication(ParticipantOfChatRepository participantOfChatRepository, ChatOfParticipantRepository chatOfParticipantRepository, ChatOfParticipantRepository chatOfParticipantRepository1) {
+        this.participantOfChatRepository = participantOfChatRepository;
+        this.chatOfParticipantRepository = chatOfParticipantRepository1;
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(SpringChatApplication.class, args);
@@ -28,8 +41,7 @@ public class SpringChatApplication {
     CommandLineRunner commandLineRunner(
             PasswordEncoder passwordEncoder,
             ChatUserRepository userRepository,
-            ChatRepository chatRepository,
-            ParticipantRepository participantRepository
+            ChatRepository chatRepository
     ) {
 //         return args -> {
 //            ChatUser admin = ChatUser.builder()
@@ -59,14 +71,10 @@ public class SpringChatApplication {
 
             return args -> {
                 // --- Create Users ---
-                ChatUser admin = createUser(userRepository, passwordEncoder, "admin", "admin@test.com", "dummy", "USER");
-                ChatUser test1 = createUser(userRepository, passwordEncoder, "test1", "test1@test.com", "dummy", "USER");
-                ChatUser test2 = createUser(userRepository, passwordEncoder, "test2", "test2@test.com", "dummy", "USER");
 
                 ChatUser userA = createUser(userRepository, passwordEncoder, "usera", "usera@test.com", "dummy", "USER"); // User A
                 ChatUser userB = createUser(userRepository, passwordEncoder, "userb", "userb@test.com", "dummy", "USER"); // User B
                 ChatUser userC = createUser(userRepository, passwordEncoder, "userc", "userc@test.com", "dummy", "USER"); // User C
-
 
                 // --- Create Chats ---
                 UUID chat1Id = UUID.fromString("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Example UUID - replace with your own
@@ -75,23 +83,22 @@ public class SpringChatApplication {
                 UUID chat2Id = UUID.fromString("b1c2d3e4-f5a6-8901-2345-678901abcdef"); // Example UUID - replace with your own
                 Chat chat2 = createChat(chatRepository, chat2Id, "one-to-one");
 
+                // group chat
                 UUID chat3Id = UUID.fromString("c1d2e3f4-a5b6-9012-3456-789012abcdef"); // Example UUID - replace with your own
                 Chat chat3 = createChat(chatRepository, chat3Id, "group");
 
 
                 // --- Create Participants ---
-                createParticipant(participantRepository, chat1Id, userA.getId());
-                createParticipant(participantRepository, chat1Id, userB.getId());
+                createParticipant(chat1Id, userA.getId());
+                createParticipant(chat1Id, userB.getId());
 
-                createParticipant(participantRepository, chat2Id, userA.getId());
-                createParticipant(participantRepository, chat2Id, userC.getId());
+                createParticipant(chat2Id, userA.getId());
+                createParticipant(chat2Id, userC.getId());
 
-                createParticipant(participantRepository, chat3Id, userA.getId());
-                createParticipant(participantRepository, chat3Id, userB.getId());
-                createParticipant(participantRepository, chat3Id, userC.getId());
+                createParticipant(chat3Id, userA.getId());
+                createParticipant(chat3Id, userB.getId());
+                createParticipant(chat3Id, userC.getId());
 
-
-                System.out.println("Dummy data created successfully!");
             };
     }
 
@@ -113,10 +120,11 @@ public class SpringChatApplication {
         return chatRepository.save(chat);
     }
 
-    private void createParticipant(ParticipantRepository participantRepository, UUID chatId, UUID userId) {
-        ParticipantKey participantKey = new ParticipantKey(chatId, userId, Instant.now());
-        Participant participant = new Participant(participantKey);
-        participantRepository.save(participant);
+    private void createParticipant(UUID chatId, UUID userId) {
+        // what if only one of the statement gets executed ? this will leave the database in inconsistent state.
+        participantOfChatRepository.save(new ParticipantOfChat(new ParticipantOfChatKey(chatId, userId, Instant.now())));
+        chatOfParticipantRepository.save(new ChatOfParticipant(new ChatOfParticipantKey(userId, chatId, Instant.now())));
+
     }
 
 

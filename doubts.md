@@ -17,6 +17,8 @@ user opens chat application
 
 ---
 ## Doubts 
-1. how are topics handled in real world applications like Whatsapp ?
-2. 
+1. how are topics handled in real world applications like Whatsapp ? 
+
+--- 
+In Cassandra, we often design tables specifically for the queries we need to perform efficiently.
 

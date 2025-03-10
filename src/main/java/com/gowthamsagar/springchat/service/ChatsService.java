@@ -5,10 +5,8 @@ import com.gowthamsagar.springchat.entity.Chat;
 import com.gowthamsagar.springchat.entity.ChatUser;
 import com.gowthamsagar.springchat.repository.ChatRepository;
 import com.gowthamsagar.springchat.repository.ChatUserRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,14 +21,18 @@ public class ChatsService {
     private ChatRepository chatRepository;
 
     @Autowired
-    private ParticipantService participantRepository;
-    @Autowired
     private ChatUserRepository chatUserRepository;
+
+    @Autowired
+    private ChatOfParticipantService chatOfParticipantService;
+
+    @Autowired
+    private ParticipantOfChatService participantOfChatService;
 
     public List<ChatDTO> getUserInbox(UUID currentUserId) {
 
         // what are the 10 latest chatIds that the current user is a participant of ?
-        List<UUID> chatIds = participantRepository.getChatIdsForUser(currentUserId, 0, 10);
+        List<UUID> chatIds = chatOfParticipantService.getChatsOfParticipant(currentUserId, 10, 0);
 
         // get those chats
         List<Chat> chats = chatRepository.findAllById(chatIds);
@@ -45,7 +47,7 @@ public class ChatsService {
                     chatDTO.setLastMessageTimestamp(chat.getLastMessageTimestamp());
 
                     // from the participants, get the participants list
-                    List<UUID> participantIds = participantRepository.getUserIdsForChat(chat.getId(), 0, 10);
+                    List<UUID> participantIds = participantOfChatService.getParticipantsOfChat(chat.getId(), 10, 0);
 
                     participantIds =  participantIds
                             .stream()

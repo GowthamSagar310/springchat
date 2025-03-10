@@ -34,16 +34,17 @@
                     <div class="list-group">
                         <a
                                 href="javascript:void(0)"
-                                class="list-group-item list-group-item-action"
+                                class="list-group-item list-group-item-action chat-item"
                                 th:each="chat : ${chats}"
                                 th:data-chat-id="${chat.id}"
                                 onclick="setActiveChatId(event, this)"
                         >
                             <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1" th:text="${chat.senderName}">User Name</h6>
-                                <small  th:text="${chat.lastMessageDate}">Time</small>
+                                <h6 class="mb-1 chat-title" th:text="${chat.senderName}">User Name</h6>
+                                <small  th:text="${chat.lastMessageTimestamp}">Time</small>
                             </div>
-                            <p class="mb-1" th:text="${chat.lastMessage}"></p>
+                            <p class="mb-1 chat-last-message" th:text="${chat.lastMessageContent}"></p>
+                            <span class="badge bg-danger rounded-pill unread-badge" style="display: none;">New</span> <!-- Unread badge -->
                         </a>
                     </div>
                 </div>

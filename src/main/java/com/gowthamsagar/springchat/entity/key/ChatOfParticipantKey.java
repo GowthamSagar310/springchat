@@ -14,30 +14,22 @@ import java.time.Instant;
 import java.util.UUID;
 
 @PrimaryKeyClass
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParticipantKey {
-
-    // query 1: participants involved in chatId
-    // query 2: all the chats, userId is involved in
-    // both of them cannot be done efficiently with a single query.
-    // cassandra won't allow two partition keys in a single table.
-    // so we need to create a separate table for each query. (participants_by_chat, participants_by_user)
-    // de-normalization.
-    // is there a way to do this with a single table, without "Allow Filtering"?
-    // no, because the partition key is the only way to filter the data.
-    // TODO: change this
-
-    @PrimaryKeyColumn(name = "chat_id", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
-    @CassandraType(type = CassandraType.Name.UUID)
-    private UUID chatId;
+public class ChatOfParticipantKey {
 
     @PrimaryKeyColumn(name = "user_id", ordinal = 2, type = PrimaryKeyType.PARTITIONED)
     @CassandraType(type = CassandraType.Name.UUID)
     private UUID userId;
 
+    @PrimaryKeyColumn(name = "chat_id", ordinal = 0, type = PrimaryKeyType.CLUSTERED)
+    @CassandraType(type = CassandraType.Name.UUID)
+    private UUID chatId;
+
     @PrimaryKeyColumn(name = "created_at", ordinal = 2, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     private Instant createdAt;
+
 
 }

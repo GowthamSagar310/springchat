@@ -7,34 +7,33 @@ import com.gowthamsagar.springchat.entity.key.MessageKey;
 import com.gowthamsagar.springchat.security.ChatUserDetails;
 import com.gowthamsagar.springchat.security.CustomOAuth2User;
 import com.gowthamsagar.springchat.service.MessageService;
-import com.gowthamsagar.springchat.service.ParticipantService;
+import com.gowthamsagar.springchat.service.ParticipantOfChatService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
 public class ChatController {
 
-    private final MessageService messageService;
-    private final ParticipantService participantService;
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private ParticipantOfChatService participantOfChatService;
 
-    public ChatController(MessageService messageService, ParticipantService participantService) {
-        this.messageService = messageService;
-        this.participantService = participantService;
-    }
 
     // client sends the message to /app/sendMessage
     @MessageMapping("/sendMessage")
@@ -78,11 +77,6 @@ public class ChatController {
 
         messageService.createAndSaveMessage(message, senderId);
 
-        // change this code based on chat type.
-        // Participant participant = new Participant(new ParticipantKey(chatMessage.getChatId(), userId));
-
-        // participantService.saveParticipant();
-
         // todo: 2. add participants in chat if not there
         // todo: 3. add in chat table if not there.
         // todo: 4. add {username, userid, content, type}
@@ -95,6 +89,20 @@ public class ChatController {
 
         String topic = "/topic/chat/" + message.getId().getChatId().toString();
         simpMessagingTemplate.convertAndSend(topic, responseJson.toString());
+
+        // notify all participants of the chat
+        List<UUID> participants = participantOfChatService.getParticipantsOfChat(messageDTO.getChatId(), 0, 10);
+        for (UUID participantUserId : participants) {
+            if (!participantUserId.equals(senderId)) { // Don't send notification to sender
+                JSONObject notificationPayload = new JSONObject();
+                notificationPayload.put("chatId", messageDTO.getChatId().toString());
+                notificationPayload.put("messagePreview", messageDTO.getMessage().substring(0, Math.min(messageDTO.getMessage().length(), 50)) + "..."); // Short preview
+                notificationPayload.put("senderUsername", senderEmail);
+                String inboxTopic = "/topic/inbox/" + participantUserId;
+                simpMessagingTemplate.convertAndSend(inboxTopic, notificationPayload.toString());
+                System.out.println("Sent inbox notification to topic: " + inboxTopic + ", payload: " + notificationPayload);
+            }
+        }
 
         return responseJson.toString();
 

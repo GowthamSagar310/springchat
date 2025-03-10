@@ -1,6 +1,6 @@
 package com.gowthamsagar.springchat.entity;
 
-import com.gowthamsagar.springchat.entity.key.ParticipantKey;
+import com.gowthamsagar.springchat.entity.key.ParticipantOfChatKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,15 +8,14 @@ import lombok.Setter;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-// cassandra entity
-
-@Table("participants")
-@Getter @Setter
-@NoArgsConstructor
+@Table("participants_by_chat")
+@Getter
+@Setter
 @AllArgsConstructor
-public class Participant {
+@NoArgsConstructor
+public class ParticipantOfChat {
 
     @PrimaryKey
-    private ParticipantKey id;
+    private ParticipantOfChatKey id;
 
 }
