@@ -10,7 +10,6 @@ import com.gowthamsagar.springchat.repository.ChatOfParticipantRepository;
 import com.gowthamsagar.springchat.repository.ChatRepository;
 import com.gowthamsagar.springchat.repository.ChatUserRepository;
 import com.gowthamsagar.springchat.repository.ParticipantOfChatRepository;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

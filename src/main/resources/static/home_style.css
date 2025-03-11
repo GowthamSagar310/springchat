@@ -121,5 +121,32 @@ main {
 }
 
 .list-group-item.chat-link.active {
-    background-color: #d0d7de; /* Example active chat highlight */
+    background-color: #d0d7de;
+}
+
+.list-group-item.chat-item.unread-chat {
+    font-weight: bold; /* Make the entire chat item bolder */
+    background-color: #f8f9fa; /* Optional: Slightly different background */
+}
+
+.list-group-item.chat-item.unread-chat .chat-last-message {
+    font-weight: bold; /* Make the last message content bolder */
+}
+
+.list-group-item.chat-item.unread-chat .chat-title {
+    font-weight: bolder; /* Make the chat title bolder */
+}
+
+/* Top Bar */
+.top-bar {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+}
+
+/* Chat Header */
+.chat-header {
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
 }

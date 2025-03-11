@@ -10,14 +10,17 @@ import com.gowthamsagar.springchat.service.MessageService;
 import com.gowthamsagar.springchat.service.ParticipantOfChatService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.Instant;
 import java.util.List;
@@ -91,7 +94,7 @@ public class ChatController {
         simpMessagingTemplate.convertAndSend(topic, responseJson.toString());
 
         // notify all participants of the chat
-        List<UUID> participants = participantOfChatService.getParticipantsOfChat(messageDTO.getChatId(), 0, 10);
+        List<UUID> participants = participantOfChatService.getParticipantsOfChat(messageDTO.getChatId(), 1, 10);
         for (UUID participantUserId : participants) {
             if (!participantUserId.equals(senderId)) { // Don't send notification to sender
                 JSONObject notificationPayload = new JSONObject();
@@ -107,5 +110,22 @@ public class ChatController {
         return responseJson.toString();
 
     }
+
+    @GetMapping("/api/chats/{chatId}/messages")
+    public ResponseEntity<List<MessageDTO>> getChatMessages(
+            @PathVariable String chatId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        try {
+            UUID chatUuid = UUID.fromString(chatId);
+            List<MessageDTO> messages = messageService.getMessagesForChat(chatUuid, page, size);
+            return ResponseEntity.ok(messages);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
+        }
+    }
+
 
 }

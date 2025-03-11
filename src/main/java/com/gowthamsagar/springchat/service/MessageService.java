@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class MessageService {
     private MessageRepository messageRepository;
 
     // gets messages using repository
-    public List<Message> getMessagesForChat(UUID chatId, int page, int size) {
+    public List<MessageDTO> getMessagesForChat(UUID chatId, int page, int size) {
 
         // how to use pageable ?
         // pageable is made of page_index + batch_size
@@ -30,7 +31,16 @@ public class MessageService {
         // next 20 messages -> 1, 20
 
         Slice<Message> messages = messageRepository.findMessagesById_ChatId(chatId, CassandraPageRequest.of(page, size));
-        return messages.getContent();
+        return messages.stream()
+                .map(message -> {
+                    MessageDTO dto = new MessageDTO();
+                    dto.setChatId(message.getId().getChatId());
+                    dto.setSenderId(message.getSenderId());
+                    dto.setMessage(message.getContent());
+                    // username is missing in Message entity. We can fetch it from ChatUser entity using senderId if needed.
+                    return dto;
+                })
+                .collect(Collectors.toList());
 
     }
 

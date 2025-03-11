@@ -47,7 +47,7 @@ public class ChatsService {
                     chatDTO.setLastMessageTimestamp(chat.getLastMessageTimestamp());
 
                     // from the participants, get the participants list
-                    List<UUID> participantIds = participantOfChatService.getParticipantsOfChat(chat.getId(), 10, 0);
+                    List<UUID> participantIds = participantOfChatService.getParticipantsOfChat(chat.getId(), 1, 10);
 
                     participantIds =  participantIds
                             .stream()

@@ -4,8 +4,8 @@ var activeChatId = null;
 var noActiveChatMessageElement = document.getElementById("no-active-chat-message");
 var messageInputElement = document.getElementById("messageInput");
 var sendMessageButton = document.getElementById("sendMessageButton");
-
 var currentSubscription = null; // to track current chat websocket subscription
+var message_container = document.getElementById("message-container");
 
 // stomp client
 const stompClient = new StompJs.Client({
@@ -28,7 +28,6 @@ const stompClient = new StompJs.Client({
 });
 stompClient.activate();
 
-var message_container = document.getElementById("message-container");
 
 // handle inbox notification
 function subscribeToInboxTopic() {
@@ -94,9 +93,23 @@ sendMessageButton.addEventListener("click", (event) => {
     event.preventDefault();
 })
 
+async function fetchChatMessages(chatId) {
+    try {
+        const response = await fetch(`/api/chats/${activeChatId}/messages`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const messages = await response.json();
+        return messages;
+    } catch (error) {
+        console.error("Could not fetch chat messages:", error);
+        return [];
+    }
+}
+
 // move this to new js file
 // set active chat id
-function setActiveChatId(event, chatLinkElement) {
+async function setActiveChatId(event, chatLinkElement) {
 
     activeChatId = chatLinkElement.getAttribute('data-chat-id');
     console.log("change active chatId to: " + activeChatId);
@@ -120,6 +133,22 @@ function setActiveChatId(event, chatLinkElement) {
             chatItem.classList.remove('unread-chat');
         }
 
+        // Set Chat Partner Name in Header
+        const chatPartnerNameElement = document.getElementById('chat-partner-name');
+        const chatTitleElement = chatLinkElement.querySelector('.chat-title');
+        if (chatTitleElement) {
+            chatPartnerNameElement.textContent = chatTitleElement.textContent;
+        } else {
+            chatPartnerNameElement.textContent = "Chat";
+        }
+
+        // Fetch and display messages
+        message_container.innerHTML = ''; // Clear existing messages
+        const messages = await fetchChatMessages(activeChatId);
+        messages.forEach(message => {
+            message_container.appendChild(createMessageElement(message));
+        });
+
     } else {
         // No chat selected - show "no chat" message, disable input
         document.getElementById('no-active-chat-message').style.display = 'block';
@@ -140,11 +169,10 @@ function handleInboxNotification(notification) {
     console.log("Inbox Notification received:", notification);
     const chatId = notification.chatId;
     const messagePreview = notification.messagePreview;
-    // const senderUsername = notification.senderUsername; // You can use senderUsername if needed
 
     const chatItem = document.getElementById(`chat-item-${chatId}`); // Select chat item by ID
     if (chatItem) {
-        const lastMessageContentElement = chatItem.querySelector('.last-message-content'); // Select last message <p>
+        const lastMessageContentElement = chatItem.querySelector('.chat-last-message'); // Select last message <p>
         if (lastMessageContentElement) {
             lastMessageContentElement.innerText = messagePreview; // Update last message preview
         }
@@ -153,3 +181,5 @@ function handleInboxNotification(notification) {
         console.warn("Chat item not found in inbox for chatId: " + chatId); // Log if chat item is not found (for debugging)
     }
 }
+
+// todo: once the document gets loaded, change the topbar SpringChat name to Username.
