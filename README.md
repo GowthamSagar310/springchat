@@ -7,7 +7,6 @@ A backend-focused, real-time chat application built using the Spring framework, 
 3. Group chats, One-to-One chats
 4. Search for messages, chats
 5. User authentication (log-in, log-out, register)
-6. Audio and Video calls
 
 ## Techstack
 
