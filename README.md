@@ -23,7 +23,7 @@ A backend-focused, real-time chat application built using the Spring framework, 
 Thymeleaf - Template engine for UI rendering
 
 ## TODO
- 
+- [ ] audio and video capabilities 
 
 ## Additional Notes
 1. For doubts and clarifications, refer to [doubts and clarifications](doubts.md)*
